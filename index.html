@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManatAds MiniApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #131a26;
+            --primary-neon: #00f2fe;
+            --secondary-neon: #4facfe;
+            --text-color: #ffffff;
+            --text-muted: #6c7d93;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .header span {
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        
+        /* Balans Kartı */
+        .balance-card {
+            background: linear-gradient(135deg, #0ba5a8 0%, #066b6e 100%);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(11, 165, 168, 0.2);
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .balance-card .title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
+        }
+        .balance-card .amount {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .balance-card .amount span {
+            font-size: 18px;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        .liga {
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 6px;
+            width: 100%;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #fff;
+            height: 100%;
+            width: 25%;
+            border-radius: 10px;
+        }
+        .target-text {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+
+        /* Grid Statistikalar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .stat-box .num {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .stat-box .lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Böyük Neon Düymə */
+        .action-btn {
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Tapşırıqlar Listi */
+        .task-list {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 15px;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .task-item:last-child { border: none; }
+        .task-info h4 { margin: 0; font-size: 14px; }
+        .task-info p { margin: 4px 0 0; font-size: 12px; color: #00f2fe; }
+        .task-btn {
+            background: #066b6e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* 🎲 3D ZƏR OYUNU SAHƏSİ 🎲 */
+        .dice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            margin-top: 20px;
+            perspective: 600px; /* 3D effekti üçün */
+        }
+        .scene {
+            width: 60px;
+            height: 60px;
+            margin: 20px;
+        }
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(20deg);
+            transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+        .cube-face {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        /* 3D Üzlərin yerləşməsi */
+        .face-1 { transform: rotateY(0deg) translateZ(30px); }
+        .face-2 { transform: rotateY(90deg) translateZ(30px); }
+        .face-3 { transform: rotateY(180deg) translateZ(30px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(30px); }
+        .face-5 { transform: rotateX(90deg) translateZ(30px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(30px); }
+
+        /* Admin Panel Düyməsi */
+        #admin-panel-btn {
+            display: none;
+            background: #ff4757;
+            margin-top: 15px;
+        }
+        .admin-section {
+            display: none;
+            background: #1e272e;
+            padding: 15px;
+            border-radius: 16px;
+            margin-top: 15px;
+        }
+        .admin-section input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ManatAds</h1>
+        <span>İZLƏ • QAZAN • ÇEVİR</span>
+    </div>
+
+    <div class="balance-card">
+        <div class="title">Balansınız</div>
+        <div class="amount" id="balance-view">0 <span>MC</span></div>
+        <div class="liga">
+            <span>🥉 Bürünc Liqa</span>
+            <span id="percent-view">2.0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-view"></div>
+        </div>
+        <div class="target-text">Çıxarış Hədəfi: 5.00 AZN</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="num" id="total-earned">0</div>
+            <div class="lbl">Ümumi Qazanc</div>
+        </div>
+        <div class="stat-box">
+            <div class="num">0/24</div>
+            <div class="lbl">Bugünkü Videolar</div>
+        </div>
+        <div class="stat-box">
+            <div class="num" id="refs-count">0</div>
+            <div class="lbl">Dəvət Olunanlar</div>
+        </div>
+        <div class="stat-box">
+            <div class="num" id="ref-earned">0</div>
+            <div class="lbl">Referal Qazancı</div>
+        </div>
+    </div>
+
+    <button class="action-btn">
+        <span>▶</span> Video İzlə & 300 MC Qazan
+    </button>
+
+    <div class="dice-container">
+        <h3>🎲 Bəxtini Sına (Zər At)</h3>
+        <div class="scene">
+            <div class="cube" id="cube">
+                <div class="cube-face face-1">1</div>
+                <div class="cube-face face-2">2</div>
+                <div class="cube-face face-3">3</div>
+                <div class="cube-face face-4">4</div>
+                <div class="cube-face face-5">5</div>
+                <div class="cube-face face-6">6</div>
+            </div>
+        </div>
+        <button class="action-btn" onclick="rollDice()" style="background: var(--card-bg); border: 2px solid var(--primary-neon); box-shadow: none;">
+            🎲 Zəri Fırlat
+        </button>
+    </div>
+
+    <div class="task-list">
+        <h3>📋 Sosial Tapşırıqlar</h3>
+        <div id="tasks-container">Loading...</div>
+    </div>
+
+    <button class="action-btn" id="admin-panel-btn" onclick="toggleAdminSection()">👑 Admin Panel</button>
+    
+    <div class="admin-section" id="admin-section">
+        <h3>Yeniliyin Əlavə Edilməsi</h3>
+        <input type="text" id="task-desc" placeholder="Tapşırıq adı (Məs: Kanala qoşul)">
+        <input type="number" id="task-reward" placeholder="Mükafat (Coin)">
+        <input type="text" id="task-link" placeholder="Kanal linki (https://t.me/...)">
+        <button class="action-btn" onclick="addNewTask()">Ekle</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // MiniApp-ı tam ekran edir
+        
+        // Telegram-dan istifadəçi məlumatlarını təhlükəsiz alırıq
+        const user = tg.initDataUnsafe.user || { id: 8055987590, username: "MAGA" }; // Test üçün default user
+        const ADMIN_IDS = [8055987590, 6229739140];
+
+        // Səhifə yüklənəndə dataları çəkirik
+        async function loadUserData() {
+            // İstifadəçini qeydiyyatdan keçir və ya datalarını gətir
+            let res = await fetch(`/api/user?id=${user.id}&username=${user.username || 'User'}`);
+            let data = await res.json();
+            
+            document.getElementById('balance-view').innerHTML = `${data.mc_balance} <span>MC</span>`;
+            document.getElementById('total-earned').innerText = data.total_earned;
+            document.getElementById('refs-count').innerText = data.refs_count;
+            document.getElementById('ref-earned').innerText = data.ref_earned;
+
+            // Admin yoxlanışı
+            if (ADMIN_IDS.includes(user.id)) {
+                document.getElementById('admin-panel-btn').style.display = 'block';
+            }
+
+            loadTasks();
+        }
+
+        async function loadTasks() {
+            let res = await fetch(`/api/tasks?user_id=${user.id}`);
+            let tasks = await res.json();
+            let container = document.getElementById('tasks-container');
+            container.innerHTML = '';
+
+            tasks.forEach(task => {
+                container.innerHTML += `
+                    <div class="task-item">
+                        <div class="task-info">
+                            <h4>${task.description}</h4>
+                            <p>+${task.reward} MC</p>
+                        </div>
+                        <button class="task-btn" onclick="doTask(${task.task_id}, '${task.link}')">
+                            ${task.completed ? '✅ Bitdi' : 'Yerine Yetir'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function doTask(taskId, link) {
+            tg.openLink(link); // Telegram kanal linkini açır
+            
+            // 4 saniyə sonra tamamlandığını yoxlayıb coin vermək üçün serverə sorğu atır
+            setTimeout(async () => {
+                let res = await fetch('/api/complete_task', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: user.id, task_id: taskId })
+                });
+                let result = await res.json();
+                if(result.success) {
+                    loadUserData();
+                }
+            }, 4000);
+        }
+
+        // 🎲 3D ZƏR FIRLATMA FUNKSİYASI
+        async function rollDice() {
+            const cube = document.getElementById('cube');
+            
+            // Serverdən zər nəticəsini alırıq
+            let res = await fetch('/api/roll_dice', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: user.id })
+            });
+            let data = await res.json();
+            
+            if(!data.success) {
+                alert("Xəta baş verdi.");
+                return;
+            }
+
+            const result = data.value; // Serverdən gələn 1-6 arası rəqəm
+
+            // 3D Kubun üzlərinə uyğun dərəcələr koordinatları
+            const rotations = {
+                1: { x: 0, y: 0 },
+                2: { x: 0, y: -90 },
+                3: { x: 0, y: -180 },
+                4: { x: 0, y: 90 },
+                5: { x: -90, y: 0 },
+                6: { x: 90, y: 0 }
+            };
+
+            // Fırlanma effekti vermək üçün əvvəlcə çoxlu dövr etdiririk
+            const randX = Math.floor(Math.random() * 3 + 3) * 360;
+            const randY = Math.floor(Math.random() * 3 + 3) * 360;
+            
+            const targetX = randX + rotations[result].x;
+            const targetY = randY + rotations[result].y;
+
+            cube.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`;
+
+            // Fırlanma bitdikdən sonra balansı yeniləyirik
+            setTimeout(() => {
+                loadUserData();
+                tg.showPopup({
+                    title: "🎲 Zər Atıldı!",
+                    message: `Zərdə ${result} düşdü! +${result * 10} MC balansınıza əlavə olundu.`
+                });
+            }, 1600);
+        }
+
+        function toggleAdminSection() {
+            let sect = document.getElementById('admin-section');
+            sect.style.display = sect.style.display === 'block' ? 'none' : 'block';
+        }
+
+        async function addNewTask() {
+            let desc = document.getElementById('task-desc').value;
+            let reward = document.getElementById('task-reward').value;
+            let link = document.getElementById('task-link').value;
+
+            await fetch('/api/add_task', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ desc, reward, link })
+            });
+            alert("Tapşırıq Əlavə Edildi!");
+            loadTasks();
+        }
+
+        // Start
+        loadUserData();
+    </script>
+</body>
+  </html>
