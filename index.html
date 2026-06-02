@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BazarStare MiniApp</title>
+    <title>BazarStare Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #0b0e14;
-            --card-bg: #131a26;
-            --primary-neon: #00f2fe;
-            --secondary-neon: #4facfe;
-            --gradient-accent: linear-gradient(135deg, #0ba5a8 0%, #066b6e 100%);
+            --bg-color: #080b10;
+            --card-bg: #111823;
+            --neon-cyan: #00f2fe;
+            --neon-blue: #4facfe;
+            --neon-green: #00ff87;
             --text-main: #ffffff;
-            --text-muted: #6c7d93;
+            --text-muted: #74859c;
         }
 
         body {
@@ -21,231 +21,186 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 16px 16px 90px 16px; /* Alt menyu üçün boşluq */
+            padding: 20px 16px 100px 16px;
             user-select: none;
             overflow-x: hidden;
         }
 
-        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .header h1 {
-            font-size: 26px;
+            font-size: 30px;
             margin: 0;
-            background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon));
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
         }
         .header span {
-            color: var(--text-muted);
-            font-size: 11px;
-            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            font-size: 10px;
+            letter-spacing: 3px;
             text-transform: uppercase;
+            font-weight: bold;
         }
 
-        /* Səhifələrin İdarə Edilməsi */
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
+        .page { display: none; }
+        .page.active { display: block; animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-        /* ManatAds Stilində Böyük Balans Kartı */
+        /* Nəhəng Lüks Balans Kartı */
         .premium-card {
-            background: var(--gradient-accent);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 12px 30px rgba(11, 165, 168, 0.25);
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0369a1 100%);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 15px 35px rgba(6, 182, 212, 0.3), inset 0 2px 10px rgba(255,255,255,0.2);
+            margin-bottom: 25px;
             position: relative;
-            overflow: hidden;
-        }
-        .premium-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            pointer-events: none;
         }
         .premium-card .title {
-            font-size: 12px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
         }
         .premium-card .amount {
-            font-size: 36px;
-            font-weight: 800;
-            margin: 12px 0;
-            display: flex;
-            align-items: baseline;
+            font-size: 42px;
+            font-weight: 900;
+            margin: 15px 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .premium-card .amount span {
-            font-size: 18px;
-            font-weight: 500;
-            margin-left: 6px;
-            color: #rgba(255,255,255,0.8);
-        }
-        .card-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            font-size: 14px;
-        }
+        .premium-card .amount span { font-size: 20px; font-weight: 500; margin-left: 5px; }
+
         .progress-container {
             width: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            height: 8px;
-            margin-top: 10px;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            height: 10px;
+            margin-top: 15px;
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.2);
         }
         .progress-bar {
             background: #ffffff;
             height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
+            width: 35%;
+            border-radius: 20px;
+            box-shadow: 0 0 10px #fff;
+            transition: width 0.8s ease;
         }
 
-        /* Grid Statistikalar */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 25px;
         }
         .stat-box {
             background-color: var(--card-bg);
-            border-radius: 18px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 22px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            text-align: center;
         }
-        .stat-box .num {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--primary-neon);
-        }
-        .stat-box .lbl {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+        .stat-box .num { font-size: 26px; font-weight: 800; color: var(--neon-cyan); margin-bottom: 5px; }
+        .stat-box .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
 
-        /* Tapşırıqlar siyahısı */
+        /* Siyahı Strukturu */
         .list-wrapper {
             background-color: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
-        .list-wrapper h3 {
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 10px;
-        }
+        .list-wrapper h3 { margin-top: 0; font-size: 20px; font-weight: 800; margin-bottom: 15px; }
+
         .item-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
         .item-row:last-child { border: none; }
-        .item-info h4 { margin: 0; font-size: 15px; font-weight: 600; }
-        .item-info p { margin: 4px 0 0; font-size: 13px; color: var(--primary-neon); font-weight: bold; }
-        
-        /* Neon Düymələr */
-        .btn-neon {
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.2);
-        }
-        .btn-large {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            border-radius: 16px;
-            margin-top: 10px;
-        }
+        .item-info h4 { margin: 0; font-size: 16px; font-weight: 700; }
+        .item-info p { margin: 6px 0 0; font-size: 14px; color: var(--neon-green); font-weight: bold; }
 
-        /* 🎲 GÖZƏL 3D ZƏR SAHƏSİ 🎲 */
-        .dice-area {
+        /* Böyük Parlaq Düymələr */
+        .btn-neon {
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-neon:active { transform: scale(0.96); box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
+        
+        .btn-large { width: 100%; padding: 18px; font-size: 16px; border-radius: 20px; color: white; background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%); box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4); }
+
+        /* 🎲 ƏSİL NƏHƏNG 3D ZƏR SAHƏSİ 🎲 */
+        .dice-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            background: var(--card-bg);
-            border-radius: 24px;
-            perspective: 1000px;
+            background: linear-gradient(180deg, #131a26 0%, #0d131f 100%);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.03);
+            perspective: 1200px;
         }
-        .scene {
-            width: 80px;
-            height: 80px;
-            margin: 30px;
-        }
+        .scene { width: 100px; height: 100px; margin: 40px; }
         .cube {
             width: 100%;
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transform: rotateX(-20deg) rotateY(20deg);
-            transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: rotateX(-25deg) rotateY(25deg);
+            transition: transform 1.6s cubic-bezier(0.2, 0.9, 0.3, 1.05);
         }
         .cube-face {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: #ffffff;
-            border: 3px solid #e2e8f0;
-            border-radius: 16px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            border: 4px solid #ffffff;
+            border-radius: 22px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 32px;
-            font-weight: 800;
-            color: #0f172a;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 40px;
+            font-weight: 900;
+            color: #1e293b;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 10px 25px rgba(0,0,0,0.4);
         }
-        .face-1 { transform: rotateY(0deg) translateZ(40px); }
-        .face-2 { transform: rotateY(90deg) translateZ(40px); }
-        .face-3 { transform: rotateY(180deg) translateZ(40px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(40px); }
-        .face-5 { transform: rotateX(90deg) translateZ(40px); }
-        .face-6 { transform: rotateX(-90deg) translateZ(40px); }
+        .face-1 { transform: rotateY(0deg) translateZ(50px); }
+        .face-2 { transform: rotateY(90deg) translateZ(50px); }
+        .face-3 { transform: rotateY(180deg) translateZ(50px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .face-5 { transform: rotateX(90deg) translateZ(50px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(50px); }
 
-        /* 📱 PROFESSIONAL ALT NAVİQASİYA MENYUSU */
+        /* Professional Alt Menyu */
         .nav-menu {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background-color: #111622;
+            bottom: 0; left: 0; right: 0;
+            height: 76px;
+            background: #0d131f;
             border-top: 1px solid rgba(255,255,255,0.06);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
             padding-bottom: env(safe-area-inset-bottom);
         }
         .nav-item {
@@ -253,41 +208,19 @@
             flex-direction: column;
             align-items: center;
             color: var(--text-muted);
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
         }
-        .nav-item.active {
-            color: var(--primary-neon);
-        }
-        .nav-item .icon {
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
+        .nav-item.active { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0, 242, 254, 0.4); }
+        .nav-item .icon { font-size: 24px; margin-bottom: 4px; }
 
-        /* Admin interfeysi */
-        .admin-box {
-            display: none;
-            background: #1e272e;
-            padding: 20px;
-            border-radius: 20px;
-            margin-top: 20px;
-        }
-        .admin-box input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            border: none;
-            background: #2f3640;
-            color: white;
-            box-sizing: border-box;
-        }
+        .admin-box { display: none; background: #1a2230; padding: 20px; border-radius: 24px; margin-top: 25px; border: 1px solid #ff4757; }
+        .admin-box input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: none; background: #0d131f; color: white; box-sizing: border-box; font-size: 14px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -296,58 +229,42 @@
 
     <div class="header">
         <h1>BazarStare</h1>
-        <span id="sub-title">Aktiv Mini App Platforması</span>
+        <span id="sub-title">PREMIUM EKOSİSTEM</span>
     </div>
 
     <div id="page-home" class="page active">
         <div class="premium-card">
-            <div class="title">Balansınız</div>
+            <div class="title">Cari Xallarınız</div>
             <div class="amount" id="balance-view">0 <span>Xal</span></div>
-            <div class="card-row">
-                <span>🥈 Bürünc Plan</span>
-                <span id="percent-view">15.0%</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-view" style="width: 15%"></div>
-            </div>
+            <div class="progress-container"><div class="progress-bar" id="progress-view"></div></div>
         </div>
-
         <div class="stats-grid">
-            <div class="stat-box">
-                <div class="num" id="total-earned">0</div>
-                <div class="lbl">Ümumi Qazanc</div>
-            </div>
-            <div class="stat-box">
-                <div class="num" id="user-plan">Yoxdur</div>
-                <div class="lbl">Yatırım Planı</div>
-            </div>
+            <div class="stat-box"><div class="num" id="total-earned">0</div><div class="lbl">Ümumi Mükafat</div></div>
+            <div class="stat-box"><div class="num" id="user-plan">Yoxdur</div><div class="lbl">Yatırım Statusu</div></div>
         </div>
-        
         <div class="list-wrapper">
-            <h3>🏆 Top 15 Liderlər</h3>
-            <div id="leaders-container">Loading...</div>
+            <h3>🏆 Lider Şəxslər (Top 15)</h3>
+            <div id="leaders-container">Yüklənir...</div>
         </div>
     </div>
 
     <div id="page-tasks" class="page">
         <div class="list-wrapper">
-            <h3>📋 Aktiv Tapşırıqlar</h3>
+            <h3>📋 Mövcud Missiyalar</h3>
             <div id="tasks-container">Yüklənir...</div>
         </div>
-        
         <div class="admin-box" id="admin-area">
-            <h3 style="color: #ff4757;">👑 Admin Task Paneli</h3>
-            <input type="text" id="task-desc" placeholder="Tapşırıq adı">
-            <input type="number" id="task-reward" placeholder="Mükafat Xalı">
-            <input type="text" id="task-link" placeholder="Kanal və ya Post Linki">
-            <button class="btn-neon btn-large" onclick="addNewTask()">➕ Sistemi Əlavə Et</button>
+            <h3 style="color: #ff4757; margin-top:0;">👑 Admin Missiya Paneli</h3>
+            <input type="text" id="task-desc" placeholder="Missiya mətni">
+            <input type="number" id="task-reward" placeholder="Veriləcək Xal">
+            <input type="text" id="task-link" placeholder="Keçid Linki (https://...)">
+            <button class="btn-neon btn-large" onclick="addNewTask()">🚀 Missiyanı Aktiv Et</button>
         </div>
     </div>
 
     <div id="page-dice" class="page">
-        <div class="dice-area">
-            <h3 style="margin-top:0;">🎲 3D Real Zər Arena</h3>
-            <p style="color: var(--text-muted); font-size:13px; text-align:center;">Hər zər atışında gələn xalın 2 qatı balansınıza köçürülür.</p>
+        <div class="dice-container">
+            <h3 style="margin-top:0; font-size:22px;">🎲 3D Canlı Zər Atışı</h3>
             <div class="scene">
                 <div class="cube" id="cube">
                     <div class="cube-face face-1">1</div>
@@ -358,58 +275,45 @@
                     <div class="cube-face face-6">6</div>
                 </div>
             </div>
-            <button class="btn-neon btn-large" onclick="rollDice()">🎲 Zəri Fırlat</button>
+            <button class="btn-neon btn-large" onclick="rollDice()" style="background: linear-gradient(90deg, #00ff87 0%, #60efff 100%); color:#000; box-shadow: 0 5px 20px rgba(0,255,135,0.3);">🎲 ZƏRİ FIRLAT</button>
         </div>
     </div>
 
     <div class="nav-menu">
-        <div class="nav-item active" onclick="switchPage('home', this)">
-            <div class="icon">🏠</div>
-            <div>Əsas Panel</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('tasks', this)">
-            <div class="icon">📋</div>
-            <div>Tapşırıqlar</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('dice', this)">
-            <div class="icon">🎲</div>
-            <div>Zər Oyunu</div>
-        </div>
+        <div class="nav-item active" onclick="switchPage('home', this)"><div class="icon">🏠</div><div>Panel</div></div>
+        <div class="nav-item" onclick="switchPage('tasks', this)"><div class="icon">📋</div><div>Missiyalar</div></div>
+        <div class="nav-item" onclick="switchPage('dice', this)"><div class="icon">🎲</div><div>Zər Arena</div></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ⚠️ Termiusda işləyən Python API serverinin İP-sini bura daxil et!
-        const API_BASE = "https://sizin-termius-ip-ünvanı.com"; 
+        // ⚠️ BURA ÖZ TERMİUS VPS İP ÜNVANINI (ÖNÜNDƏ HTTPS OLMAQLA) YAZ!
+        const API_BASE = "http://209.38.220.102"; 
 
-        const user = tg.initDataUnsafe.user || { id: 8055987590, username: "MAGA_Test" };
+        const user = tg.initDataUnsafe.user || { id: 8055987590, username: "Maga_Admin" };
         const ADMIN_IDS = [8055987590, 6229739140];
 
         function switchPage(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
             document.getElementById(`page-${pageId}`).classList.add('active');
             element.classList.add('active');
-            
             if(pageId === 'home') loadUserData();
             if(pageId === 'tasks') loadTasks();
         }
 
         async function loadUserData() {
-            let res = await fetch(`${API_BASE}/api/user?id=${user.id}&username=${user.username || 'User'}`);
-            let data = await res.json();
-            
-            document.getElementById('balance-view').innerHTML = `${data.points} <span>Xal</span>`;
-            document.getElementById('total-earned').innerText = data.total_earned;
-            document.getElementById('user-plan').innerText = data.plan || "Yoxdur";
-
-            if (ADMIN_IDS.includes(user.id)) {
-                document.getElementById('admin-area').style.display = 'block';
-            }
-            loadLeaders();
+            try {
+                let res = await fetch(`${API_BASE}/api/user?id=${user.id}&username=${user.username || 'User'}`);
+                let data = await res.json();
+                document.getElementById('balance-view').innerHTML = `${data.points} <span>Xal</span>`;
+                document.getElementById('total-earned').innerText = data.total_earned;
+                document.getElementById('user-plan').innerText = data.plan || "Yoxdur";
+                if (ADMIN_IDS.includes(user.id)) { document.getElementById('admin-area').style.display = 'block'; }
+                loadLeaders();
+            } catch(e) { console.log("Backend bağlantı xətası!"); }
         }
 
         async function loadLeaders() {
@@ -417,12 +321,8 @@
             let leaders = await res.json();
             let container = document.getElementById('leaders-container');
             container.innerHTML = '';
-            leaders.forEach((l, index) => {
-                container.innerHTML += `
-                    <div class="item-row">
-                        <div class="item-info"><h4>${index+1}. @${l.username}</h4></div>
-                        <div style="font-weight:bold; color:var(--primary-neon);">${l.points} Xal</div>
-                    </div>`;
+            leaders.forEach((l, i) => {
+                container.innerHTML += `<div class="item-row"><div class="item-info"><h4>${i+1}. @${l.username}</h4></div><div style="font-weight:bold; color:var(--neon-cyan);">${l.points} Xal</div></div>`;
             });
         }
 
@@ -431,31 +331,21 @@
             let tasks = await res.json();
             let container = document.getElementById('tasks-container');
             container.innerHTML = '';
-
-            tasks.forEach(task => {
-                container.innerHTML += `
-                    <div class="item-row">
-                        <div class="item-info">
-                            <h4>${task.description}</h4>
-                            <p>+${task.reward} Xal</p>
-                        </div>
-                        <button class="btn-neon" onclick="doTask(${task.task_id}, '${task.link}')">
-                            ${task.completed ? '✅ Hazır' : 'Yoxla'}
-                        </button>
-                    </div>`;
+            tasks.forEach(t => {
+                container.innerHTML += `<div class="item-row"><div class="item-info"><h4>${t.description}</h4><p>+${t.reward} Xal</p></div><button class="btn-neon" onclick="doTask(${t.task_id}, '${t.link}')">${t.completed ? '✅ Bitdi' : 'Yerine Yetir'}</button></div>`;
             });
         }
 
         function doTask(taskId, link) {
             tg.openLink(link);
             setTimeout(async () => {
-                let res = await fetch(`${API_BASE}/api/complete_task`, {
+                await fetch(`${API_BASE}/api/complete_task`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ user_id: user.id, task_id: taskId })
                 });
                 loadTasks();
-            }, 5000);
+            }, 4000);
         }
 
         async function rollDice() {
@@ -466,35 +356,30 @@
                 body: JSON.stringify({ user_id: user.id })
             });
             let data = await res.json();
-            
             const result = data.value;
             const rotations = { 1: {x:0, y:0}, 2: {x:0, y:-90}, 3: {x:0, y:-180}, 4: {x:0, y:90}, 5: {x:-90, y:0}, 6: {x:90, y:0} };
-            
-            const targetX = (Math.floor(Math.random() * 3 + 3) * 360) + rotations[result].x;
-            const targetY = (Math.floor(Math.random() * 3 + 3) * 360) + rotations[result].y;
-
+            const targetX = (Math.floor(Math.random() * 4 + 4) * 360) + rotations[result].x;
+            const targetY = (Math.floor(Math.random() * 4 + 4) * 360) + rotations[result].y;
             cube.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`;
-
             setTimeout(() => {
-                tg.showPopup({ title: "🎲 Zər Atıldı!", message: `Zərdə ${result} xal çıxdı! Balansınıza 2 qatı əlavə olundu.` });
-            }, 1600);
+                tg.showPopup({ title: "🎲 Zər Atıldı!", message: `Zərdə ${result} düşdü. Balansınıza 2 qatı köçürüldü!` });
+                loadUserData();
+            }, 1700);
         }
 
         async function addNewTask() {
             let desc = document.getElementById('task-desc').value;
             let reward = document.getElementById('task-reward').value;
             let link = document.getElementById('task-link').value;
-
             await fetch(`${API_BASE}/api/add_task`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ desc, reward, link })
             });
-            alert("Tapşırıq uğurla verilənlər bazasına yükləndi!");
+            alert("Missiya uğurla əlavə olundu!");
             loadTasks();
         }
 
-        // İlk işə salınma
         loadUserData();
     </script>
 </body>
